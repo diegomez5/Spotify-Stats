@@ -9,30 +9,31 @@ const valueToTime: { [key: number]: string } = {
 
 interface SliderProps {
     doAfterChange: (choice: number) => void;
+    min: number;
+    max: number;
+    width: number;
+    label?: string;
 }
 
-const Slider = ({doAfterChange}: SliderProps) => {
+const Slider = ({doAfterChange, min, max, width, label}: SliderProps) => {
     
 
     const [ value, setValue ] = React.useState(1);
 
     const sliderStyle = {
-		position: 'absolute' as 'absolute',
-		left: `${60}%`,
-		top: `${20}%`,
-        width: '20%',
+        width: `${width}%`,
         margin: '0 auto',
-        padding: '20px',
+        padding: '10px',
 	};
   
     return (
         <div style={sliderStyle}>
             <RangeSlider
                 value={value}
-                min={0}
-                max={2}
+                min={min}
+                max={max}
                 onChange={e => setValue(parseInt(e.target.value))}
-                tooltipLabel={currentValue => valueToTime[currentValue]}
+                tooltipLabel={() => label ? label + value : valueToTime[value]}
                 tooltip='on'
                 style={{ width: '100%'}}
                 size='lg'

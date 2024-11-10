@@ -1,8 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 
 import Button from "./Button";
-
-type DataItem = Artist | Track;
 
 interface GridCardProps {
 	data: Artist[] | Track[];
@@ -14,9 +12,10 @@ const isArtist = (data: DataItem): data is Artist => {
     return (data as Artist).images !== undefined;
 };
 
-const GridCard = ({ data, displayButton=false, onSelectedChange }: GridCardProps) => {
+const GridCard = forwardRef(({ data, displayButton = false, onSelectedChange }: GridCardProps, ref) => {
 	const [selected, setSelected] = useState<string[]>([]);
-	const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+	const [currentlyPlaying, setCurrentlyPlaying] = useState<DataItem | null>(null);
+	const [volume, setVolume] = useState<number>(1);
 	const audioInstance = useRef<HTMLAudioElement | null>(null);
 
 	const handleCardClick = (item: DataItem, index: number) => {
@@ -36,8 +35,10 @@ const GridCard = ({ data, displayButton=false, onSelectedChange }: GridCardProps
 		}
 	}
 
-	const handlePlayClick = (e: React.MouseEvent, item: DataItem) => {
-		e.stopPropagation();
+	// play audio on click
+	const handlePlayClick = (item: DataItem, event?: React.MouseEvent) => {
+		// stop button click from reacting with card click
+		if (event) event.stopPropagation();
 
 		if (isArtist(item)) return;
 
@@ -46,15 +47,39 @@ const GridCard = ({ data, displayButton=false, onSelectedChange }: GridCardProps
             audioInstance.current.currentTime = 0;
         }
 		
-		if (currentlyPlaying === item.name) {
+		if (currentlyPlaying && currentlyPlaying.name === item.name) {
             setCurrentlyPlaying(null);
         } else {
             const newAudio = new Audio(item.preview_url!);
             newAudio.play();
             audioInstance.current = newAudio;
-            setCurrentlyPlaying(item.name);
+			audioInstance.current.volume = volume;
+            setCurrentlyPlaying(item);
         }
 	}
+
+		// allow parent component to call selectAllCards
+		useImperativeHandle(ref, () => ({
+			selectAllCards: () => {
+				const allSelected = data.map((item, index) => item.uri + " " + index);
+				setSelected(allSelected);
+		
+				if (onSelectedChange) {
+					onSelectedChange(allSelected.map((item) => item.split(" ")[0]));
+				}
+			},
+			selected,
+			setSelected,
+			handlePlayClick,
+			currentlyPlaying,
+			setVolume: (volume: number) => {
+				if (audioInstance.current) {
+					audioInstance.current.volume = volume;
+					setVolume(volume);
+				}
+			},
+		}));
+	
 	
 	useEffect(() => {
         return () => {
@@ -84,8 +109,8 @@ const GridCard = ({ data, displayButton=false, onSelectedChange }: GridCardProps
 								{isArtist(item) ? item.genres.join(", ") : item.artists.map(artist => artist.name).join(", ")}
 							</p>
 							{!isArtist(item) && displayButton ? (
-								<Button onClick={(e) => handlePlayClick(e, item)} left={77} top={85} active={item.preview_url !== null}>
-									{currentlyPlaying && currentlyPlaying === item.name ? "❚❚" : "▶"}
+								<Button onClick={(e) => handlePlayClick(item, e)} left={77} top={85} active={item.preview_url !== null}>
+									{currentlyPlaying && currentlyPlaying.name === item.name ? "❚❚" : "▶"}
 								</Button>
 							) : null}
 						</div>
@@ -94,7 +119,8 @@ const GridCard = ({ data, displayButton=false, onSelectedChange }: GridCardProps
 			))}
 		</div>
 	);
-};
+});
+
 
 export default GridCard;
 

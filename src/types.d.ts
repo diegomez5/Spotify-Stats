@@ -78,3 +78,30 @@ interface Album {
     uri: string;
     artists: Artist[];
 }
+
+interface Playlist {
+    collaborative?: boolean;
+    description?: string;
+    external_urls?: { spotify: string; };
+    href?: string;
+    id: string;
+    images?: Image[];
+    name: string;
+    owner?: User;
+    public?: boolean;
+    snapshot_id?: string;
+    tracks?: { href: string; total: number; };
+    type?: string;
+    uri?: string;
+}
+
+interface GridCardRef {
+    selectAllCards: () => void; 
+    selected: string[]; 
+    setSelected: (items: string[]) => void; 
+    handlePlayClick: (item: DataItem) => void;
+    currentlyPlaying: DataItem | null;
+    setVolume: (volume: number) => void;
+}
+
+type DataItem = Artist | Track;
