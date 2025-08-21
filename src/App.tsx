@@ -91,7 +91,7 @@ function App() {
 						<Button onClick={() => setDisplayingArtists(!displayingArtists)} >
 							{displayingArtists ? "See Top Tracks" : "See Top Artists"}
 						</Button>
-						<Slider doAfterChange={(c) => setTimePeriod(c)} min={0} max={2} width={20} />
+						<Slider doAfterChange={(c) => setTimePeriod(c)} min={0} max={2} width={100} />
 					</div>
 				</div>
 
