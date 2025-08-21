@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { fetchSpotifyData } from '../util/accessToken';
 
-function getTopData(accessToken: string | null): [Artist[][], Track[][], Playlist[], UserId: string] {
+function getTopData(accessToken: string | null): [
+  artists: Artist[][],
+  tracks: Track[][],
+  playlists: Playlist[],
+  userId: string
+] {
 	const [topArtists, setTopArtists] = useState<Artist[][]>([]);
 	const [topTracks, setTopTracks] = useState<Track[][]>([]);
 	const [playlists, setPlaylists] = useState<Playlist[]>([]);
