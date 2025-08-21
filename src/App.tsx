@@ -188,9 +188,7 @@ function App() {
 
 
 export default App;
-// https://chatgpt.com/share/74073d03-5284-4835-8907-a08ccd8644bf
 
-// https://chatgpt.com/share/66e93529-9a10-800b-98ab-ac62499789a8
 // remove dupes from seed artists
 // add a gray out if too many seeds
 
