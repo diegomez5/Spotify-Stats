@@ -1,7 +1,5 @@
 const CLIENT_ID = '7593d140df3d4317bfeae4d1d3cc23c8';
-const REDIRECT_URI =
-  (import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string) ||
-  'http://localhost:5173/callback';
+const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string
 
 async function getToken(code: string): Promise<string> {
   const codeVerifier = localStorage.getItem('verifier');
