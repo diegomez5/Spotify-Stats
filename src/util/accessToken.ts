@@ -33,3 +33,19 @@ async function getToken(code: string): Promise<string> {
   localStorage.setItem('token', token);
   return token;
 }
+
+async function fetchSpotifyData(token: string, endpoint: string): Promise<any> {
+	const result = await fetch(`https://api.spotify.com/v1/${endpoint}`, {
+		method: "GET", 
+		headers: { Authorization: `Bearer ${token}` }
+	});
+
+	if (!result.ok) {
+		const errorResponse = await result.json();
+		console.error("Error:", errorResponse);
+	}
+
+	return await result.json();
+}
+
+export { getToken, fetchSpotifyData }
